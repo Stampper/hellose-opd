@@ -1,39 +1,6 @@
 (function(){
 var app = angular.module('main', ['ui.router']) ;
 
-<<<<<<< HEAD
-app.config([
-	'$stateProvider',
-	'$urlRouterProvider',
-	function($stateProvider, $urlRouterProvider) {
-
-	  $stateProvider
-	    .state('home', {
-	      url: '/home',
-	      templateUrl: '/home.html',
-	      controller: 'MainCtrl'
-	    });
-	  $stateProvider
-	  	.state('login', {
-		  url: '/login',
-		  templateUrl: '/login.html',
-		  controller: 'LoginCtrl'
-		});
-
-	  $urlRouterProvider.otherwise('login');
-}]);
-
-
-app.controller('LoginCtrl', [
-	'$scope',
-	'$location',
-	'$stateParams', 
-	function($scope , $location ,$stateParams){
-		$scope.title = "This is Title"
-	 	console.log('login');
-	 $scope.loginSubmit = function() {
-		$location.path('/home');
-=======
 
 app.controller('LoginCtrl', [
 	'$scope',
@@ -41,28 +8,66 @@ app.controller('LoginCtrl', [
 	'$stateParams', 
 	'$http',
 	function($scope , $window ,$stateParams,$http){
-		$scope.title = "This is Title"
-	 	console.log('login');
-	 $scope.loginSubmit = function() {
-	 	console.log("email : " + this.email + " pw : "+ this.password);
-		$window.location = "/home" ;
->>>>>>> master
-	};
+	 	$scope.loginSubmit = function() {
+	 		console.log("email : " + this.email + " pw : "+ this.password);
+			$window.location = "/home" ;
+		};
+
+		$scope.showRegModal = false;
+		$scope.showRegister = function(){
+			$scope.showRegModal = !$scope.showRegModal ;
+			console.log($scope.showRegModal) ;
+		};
 }]);
 
 app.controller('MainCtrl', [
 	'$scope',
 	'$stateParams', 
-<<<<<<< HEAD
-	function($scope , $stateParams){
-	  $scope.goToPatients = function(){
-		$location.path('/patients');
-	  }
-=======
 	function($scope , posts,$stateParams){
 	  $scope.test = 'Hello world!';
 
->>>>>>> master
 }]);
+
+app.directive('modal', function () {
+    return {
+      template: '<div class="modal fade">' +
+          '<div class="modal-dialog">' +
+            '<div class="modal-content">' +
+              '<div class="modal-header">' +
+                '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
+                '<h4 class="modal-title">{{ title }}</h4>' +
+              '</div>' +
+              '<div class="modal-body" ng-transclude></div>' +
+            '</div>' +
+          '</div>' +
+        '</div>',
+      restrict: 'E',
+      transclude: true,
+      replace:true,
+      scope:true,
+      link: function postLink(scope, element, attrs) {
+        scope.title = attrs.title;
+
+        scope.$watch(attrs.visible, function(value){
+          if(value === true)
+            $(element).modal('show');
+          else
+            $(element).modal('hide');
+        });
+
+        $(element).on('shown.bs.modal', function(){
+          scope.$apply(function(){
+            scope.$parent[attrs.visible] = true;
+          });
+        });
+
+        $(element).on('hidden.bs.modal', function(){
+          scope.$apply(function(){
+            scope.$parent[attrs.visible] = false;
+          });
+        });
+      }
+    };
+  });
 
 })();
